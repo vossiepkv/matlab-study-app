@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { progressStore } from '$lib/stores/progress.svelte';
 	import { getAllCards } from '$lib/data';
 	import FlashcardDeck from '$lib/components/study/FlashcardDeck.svelte';
@@ -23,7 +24,7 @@
 
 <div class="review-page">
 	<header class="page-header">
-		<a href="/" class="back-link">Home</a>
+		<a href="{base}/" class="back-link">Home</a>
 		<h1>Spaced Repetition Review</h1>
 		<p class="page-description">
 			Cards that are due for review based on how well you know them.
@@ -44,7 +45,7 @@
 			<h2>All caught up!</h2>
 			<p>No cards are due for review right now. Come back later or study some new cards.</p>
 			<div class="caught-up-actions">
-				<a href="/" class="btn-primary">Browse Weeks</a>
+				<a href="{base}/" class="btn-primary">Browse Weeks</a>
 			</div>
 		</div>
 	{/if}

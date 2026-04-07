@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { base } from '$app/paths';
 	import { getWeek, getWeekCards } from '$lib/data';
 	import FlashcardDeck from '$lib/components/study/FlashcardDeck.svelte';
 
@@ -11,7 +12,7 @@
 {#if week && cards.length > 0}
 	<div class="flashcards-page">
 		<header class="page-header">
-			<a href="/week/{weekNum}" class="back-link">Week {weekNum}</a>
+			<a href="{base}/week/{weekNum}" class="back-link">Week {weekNum}</a>
 			<h1>Flashcards: {week.title}</h1>
 		</header>
 
@@ -21,7 +22,7 @@
 	<div class="not-found">
 		<h1>No flashcards found</h1>
 		<p>No flashcard data available for Week {weekNum}.</p>
-		<a href="/" class="btn-primary">Back to Home</a>
+		<a href="{base}/" class="btn-primary">Back to Home</a>
 	</div>
 {/if}
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { progressStore } from '$lib/stores/progress.svelte';
 	import ProgressBar from './ProgressBar.svelte';
 
@@ -19,9 +20,9 @@
 		<p class="quiz-score">Best quiz score: <strong>{stats.quizBestScore}%</strong></p>
 	{/if}
 	<div class="week-actions">
-		<a href="/week/{weekNum}/flashcards" class="btn-primary action-btn">Flashcards</a>
-		<a href="/week/{weekNum}/quiz" class="btn-secondary action-btn">Quiz</a>
-		<a href="/week/{weekNum}/cheatsheet" class="btn-secondary action-btn">Cheat Sheet</a>
+		<a href="{base}/week/{weekNum}/flashcards" class="btn-primary action-btn">Flashcards</a>
+		<a href="{base}/week/{weekNum}/quiz" class="btn-secondary action-btn">Quiz</a>
+		<a href="{base}/week/{weekNum}/cheatsheet" class="btn-secondary action-btn">Cheat Sheet</a>
 	</div>
 </div>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { weeks } from '$lib/data';
 	import WeekProgress from '$lib/components/progress/WeekProgress.svelte';
 	import StreakCounter from '$lib/components/progress/StreakCounter.svelte';
@@ -26,7 +27,7 @@
 	</div>
 
 	{#if dueCount > 0}
-		<a href="/review" class="review-banner card">
+		<a href="{base}/review" class="review-banner card">
 			<span class="review-count">{dueCount}</span>
 			<span class="review-text">card{dueCount === 1 ? '' : 's'} due for review</span>
 			<span class="review-action">Review Now</span>

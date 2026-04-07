@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { base } from '$app/paths';
 	import { getWeek, getWeekQuiz } from '$lib/data';
 	import QuizMode from '$lib/components/study/QuizMode.svelte';
 
@@ -11,7 +12,7 @@
 {#if week && questions.length > 0}
 	<div class="quiz-page">
 		<header class="page-header">
-			<a href="/week/{weekNum}" class="back-link">Week {weekNum}</a>
+			<a href="{base}/week/{weekNum}" class="back-link">Week {weekNum}</a>
 			<h1>Quiz: {week.title}</h1>
 		</header>
 
@@ -21,7 +22,7 @@
 	<div class="not-found">
 		<h1>No quiz found</h1>
 		<p>No quiz data available for Week {weekNum}.</p>
-		<a href="/" class="btn-primary">Back to Home</a>
+		<a href="{base}/" class="btn-primary">Back to Home</a>
 	</div>
 {/if}
 

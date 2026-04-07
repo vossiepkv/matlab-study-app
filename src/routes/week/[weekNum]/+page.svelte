@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { base } from '$app/paths';
 	import { getWeek, getWeekCards, getWeekQuiz } from '$lib/data';
 	import { progressStore } from '$lib/stores/progress.svelte';
 
@@ -13,7 +14,7 @@
 {#if week}
 	<div class="week-overview">
 		<header class="week-header">
-			<a href="/" class="back-link">Home</a>
+			<a href="{base}/" class="back-link">Home</a>
 			<h1>Week {week.num}: {week.title}</h1>
 			<p class="week-description">{week.description}</p>
 		</header>
@@ -28,7 +29,7 @@
 		</div>
 
 		<div class="study-modes">
-			<a href="/week/{weekNum}/flashcards" class="mode-card card">
+			<a href="{base}/week/{weekNum}/flashcards" class="mode-card card">
 				<div class="mode-icon">&#x1F4C7;</div>
 				<h3>Flashcards</h3>
 				<p>{cards.length} cards</p>
@@ -37,7 +38,7 @@
 				{/if}
 			</a>
 
-			<a href="/week/{weekNum}/quiz" class="mode-card card">
+			<a href="{base}/week/{weekNum}/quiz" class="mode-card card">
 				<div class="mode-icon">&#x2753;</div>
 				<h3>Quiz</h3>
 				<p>{quiz.length} questions</p>
@@ -46,7 +47,7 @@
 				{/if}
 			</a>
 
-			<a href="/week/{weekNum}/cheatsheet" class="mode-card card">
+			<a href="{base}/week/{weekNum}/cheatsheet" class="mode-card card">
 				<div class="mode-icon">&#x1F4CB;</div>
 				<h3>Cheat Sheet</h3>
 				<p>Quick reference</p>
@@ -57,7 +58,7 @@
 	<div class="not-found">
 		<h1>Week not found</h1>
 		<p>No content available for Week {weekNum}.</p>
-		<a href="/" class="btn-primary">Back to Home</a>
+		<a href="{base}/" class="btn-primary">Back to Home</a>
 	</div>
 {/if}
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { settingsStore } from '$lib/stores/settings.svelte';
 	import { progressStore } from '$lib/stores/progress.svelte';
 
@@ -52,7 +53,7 @@
 
 <div class="settings-page">
 	<header class="page-header">
-		<a href="/" class="back-link">Home</a>
+		<a href="{base}/" class="back-link">Home</a>
 		<h1>Settings</h1>
 		<p class="page-description">Customise the app to suit your learning preferences</p>
 	</header>

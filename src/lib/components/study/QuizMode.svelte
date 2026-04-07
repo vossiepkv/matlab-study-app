@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import QuizQuestion from './QuizQuestion.svelte';
 	import ProgressBar from '../progress/ProgressBar.svelte';
 	import { progressStore } from '$lib/stores/progress.svelte';
@@ -86,7 +87,7 @@
 			{/if}
 			<div class="result-actions">
 				<button class="btn-primary" onclick={retry}>Try Again</button>
-				<a href="/week/{weekNum}/flashcards" class="btn-secondary result-link">Review Flashcards</a>
+				<a href="{base}/week/{weekNum}/flashcards" class="btn-secondary result-link">Review Flashcards</a>
 			</div>
 		</div>
 	{/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { base } from '$app/paths';
 
 	interface Props {
 		onSettingsClick: () => void;
@@ -21,7 +22,7 @@
 
 <header class="site-header">
 	<div class="header-inner container">
-		<a href="/" class="logo">
+		<a href="{base}/" class="logo">
 			<span class="logo-text">MATLAB Study Buddy</span>
 		</a>
 
@@ -42,12 +43,12 @@
 			</button>
 
 			<ul class="nav-links" class:open={menuOpen}>
-				<li><a href="/" class:active={page.url.pathname === '/'} onclick={() => { menuOpen = false; }}>Home</a></li>
+				<li><a href="{base}/" class:active={page.url.pathname === (base || '/')} onclick={() => { menuOpen = false; }}>Home</a></li>
 				{#each weeks as week}
 					<li>
 						<a
-							href="/week/{week.num}"
-							class:active={page.url.pathname.startsWith(`/week/${week.num}`)}
+							href="{base}/week/{week.num}"
+							class:active={page.url.pathname.startsWith(`${base}/week/${week.num}`)}
 							onclick={() => { menuOpen = false; }}
 						>
 							W{week.num}
@@ -55,7 +56,7 @@
 					</li>
 				{/each}
 				<li>
-					<a href="/review" class:active={page.url.pathname === '/review'} onclick={() => { menuOpen = false; }}>
+					<a href="{base}/review" class:active={page.url.pathname === `${base}/review`} onclick={() => { menuOpen = false; }}>
 						Review
 					</a>
 				</li>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { base } from '$app/paths';
 	import { getWeek, getWeekCards } from '$lib/data';
 	import CodeBlock from '$lib/components/study/CodeBlock.svelte';
 	import TextToSpeech from '$lib/components/accessibility/TextToSpeech.svelte';
@@ -17,7 +18,7 @@
 {#if week && cards.length > 0}
 	<div class="cheatsheet-page">
 		<header class="page-header">
-			<a href="/week/{weekNum}" class="back-link">Week {weekNum}</a>
+			<a href="{base}/week/{weekNum}" class="back-link">Week {weekNum}</a>
 			<h1>Cheat Sheet: {week.title}</h1>
 			<p class="page-description">Quick reference for all Week {weekNum} concepts</p>
 		</header>
@@ -109,15 +110,15 @@
 		{/if}
 
 		<div class="cheat-footer">
-			<a href="/week/{weekNum}/flashcards" class="btn-secondary">Practice Flashcards</a>
-			<a href="/week/{weekNum}/quiz" class="btn-secondary">Take Quiz</a>
+			<a href="{base}/week/{weekNum}/flashcards" class="btn-secondary">Practice Flashcards</a>
+			<a href="{base}/week/{weekNum}/quiz" class="btn-secondary">Take Quiz</a>
 		</div>
 	</div>
 {:else}
 	<div class="not-found">
 		<h1>No cheat sheet found</h1>
 		<p>No content available for Week {weekNum}.</p>
-		<a href="/" class="btn-primary">Back to Home</a>
+		<a href="{base}/" class="btn-primary">Back to Home</a>
 	</div>
 {/if}
 
