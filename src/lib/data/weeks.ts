@@ -93,6 +93,24 @@ export const weeks: WeekMeta[] = [
 			'Local vs global variables',
 			'Subfunctions'
 		]
+	},
+	{
+		num: 7,
+		title: 'MATLAB App Designer',
+		description: 'Build interactive GUI apps with buttons, sliders, plots, and callbacks using MATLAB App Designer.',
+		topics: [
+			'Opening App Designer (appdesigner command, .mlapp files)',
+			'Design View vs Code View',
+			'Common components (Button, Edit Field, Label, Axes, Slider, Knob, Lamp)',
+			'Component Browser and naming components',
+			'Callbacks (ButtonPushed, ValueChanged)',
+			'Reading values with app.Component.Value',
+			'Updating UI with app.Label.Text and app.Lamp.Color',
+			'Plotting on UIAxes (plot(app.UIAxes, x, y))',
+			'switch-case inside callbacks',
+			'Packaging and installing apps (.mlappinstall)',
+			'Opening web pages with web() and downloading data with webread()'
+		]
 	}
 ];
 

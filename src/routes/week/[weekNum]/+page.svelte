@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { base } from '$app/paths';
-	import { getWeek, getWeekCards, getWeekQuiz, getWeekTranslations } from '$lib/data';
+	import { getWeek, getWeekCards, getWeekQuiz, getWeekTranslations, getWeekLabs } from '$lib/data';
 	import { progressStore } from '$lib/stores/progress.svelte';
 
 	let weekNum = $derived(Number(page.params.weekNum));
@@ -9,6 +9,7 @@
 	let cards = $derived(getWeekCards(weekNum));
 	let quiz = $derived(getWeekQuiz(weekNum));
 	let translations = $derived(getWeekTranslations(weekNum));
+	let labs = $derived(getWeekLabs(weekNum));
 	let stats = $derived(progressStore.getWeekStats(weekNum));
 </script>
 
@@ -53,6 +54,14 @@
 					<div class="mode-icon">&#x1F524;</div>
 					<h3>Translate</h3>
 					<p>{translations.length} math → code</p>
+				</a>
+			{/if}
+
+			{#if labs.length > 0}
+				<a href="{base}/week/{weekNum}/lab" class="mode-card card">
+					<div class="mode-icon">&#x1F9EA;</div>
+					<h3>Lab Walkthrough</h3>
+					<p>{labs.length} exercises</p>
 				</a>
 			{/if}
 

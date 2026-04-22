@@ -884,13 +884,199 @@ export const week6Translations: TranslationData[] = [
 	}
 ];
 
+export const week7Translations: TranslationData[] = [
+	{
+		id: 'w7-t01',
+		math: 'read the number typed into MassEditField',
+		spoken: 'get the value from mass edit field',
+		context: 'Getting input from a user in an App Designer callback.',
+		matlab: 'mass = app.MassEditField.Value;',
+		accept: ['mass=app.MassEditField.Value;', 'mass = app.MassEditField.Value'],
+		breakdown: [
+			{ symbol: 'the component', matlab: 'app.MassEditField', note: 'Always prefix components with "app." inside a callback.' },
+			{ symbol: '.Value', matlab: '.Value', note: 'Edit Fields, Sliders, Knobs, and Drop Downs all store the current value in .Value.' }
+		],
+		hints: [
+			'Inside a callback, components live under app.',
+			'Input components store their current value in .Value.',
+			'Assign it to a local variable so you can use it in calculations.'
+		],
+		explanation: 'App Designer generates code inside a class, so every component is accessed through app. The .Value property works for any input component (Edit Field, Slider, Knob, Drop Down).',
+		gotchas: [
+			'Forgetting the "app." prefix is a very common error — MATLAB will say "Unrecognized field".',
+			'Labels use .Text, NOT .Value. Only input components have .Value.'
+		]
+	},
+	{
+		id: 'w7-t02',
+		math: 'write force into the ForceEditField display',
+		spoken: 'set the force edit field value to force',
+		context: 'Updating an output field after a calculation.',
+		matlab: 'app.ForceEditField.Value = force;',
+		accept: ['app.ForceEditField.Value=force;', 'app.ForceEditField.Value = force'],
+		breakdown: [
+			{ symbol: 'target', matlab: 'app.ForceEditField.Value', note: 'Assigning to .Value updates the number shown on screen.' },
+			{ symbol: '=', matlab: '=', note: 'Assignment — one equals sign.' }
+		],
+		hints: [
+			'Same path as reading — just now on the LEFT of =.',
+			'The display refreshes as soon as the callback returns.',
+			'No need to call a "redraw" function.'
+		],
+		explanation: 'Setting app.SomeField.Value immediately re-renders the component in the UI. There is no separate "update" or "redraw" step.',
+		gotchas: [
+			'For Edit Field (Text), the value must be a string. For Edit Field (Numeric), it must be a number.',
+			'Do NOT use == — that is a comparison, not an assignment.'
+		]
+	},
+	{
+		id: 'w7-t03',
+		math: 'set the status label to "Active"',
+		spoken: 'set status label text to active',
+		context: 'Changing the text shown on a Label.',
+		matlab: "app.StatusLabel.Text = 'Active';",
+		accept: ["app.StatusLabel.Text='Active';", 'app.StatusLabel.Text = "Active";'],
+		breakdown: [
+			{ symbol: 'Label', matlab: 'app.StatusLabel', note: 'The label component.' },
+			{ symbol: '.Text', matlab: '.Text', note: 'Labels use .Text, not .Value.' },
+			{ symbol: "'...'", matlab: "'Active'", note: 'Strings go in single (or double) quotes.' }
+		],
+		hints: [
+			'Labels are read-only display, so their property is .Text.',
+			'Wrap the text you want to show in single quotes.',
+			"Write: app.StatusLabel.Text = 'Active';"
+		],
+		explanation: 'Labels display static text. Their current content lives in .Text. Input components (Edit Field, etc.) use .Value instead.',
+		gotchas: [
+			'.Value on a Label is a bug — labels do not have Value. Use .Text.',
+			'Use single quotes for classic MATLAB strings. Double quotes also work on newer MATLAB versions.'
+		]
+	},
+	{
+		id: 'w7-t04',
+		math: 'turn the WarningLamp green',
+		spoken: 'set warning lamp colour to green',
+		context: 'Changing a Lamp indicator colour.',
+		matlab: "app.WarningLamp.Color = 'g';",
+		accept: ["app.WarningLamp.Color='g';", "app.WarningLamp.Color = 'green';", "app.WarningLamp.Color = [0 1 0];"],
+		breakdown: [
+			{ symbol: 'Lamp', matlab: 'app.WarningLamp', note: 'The lamp component.' },
+			{ symbol: '.Color', matlab: '.Color', note: 'Lamps have a .Color property.' },
+			{ symbol: 'green', matlab: "'g'", note: 'Short colour code in quotes. Letters: r g b c m y k w.' }
+		],
+		hints: [
+			'Lamps use .Color (not .Value or .Text).',
+			"Green is 'g'. Red is 'r'. Black is 'k'.",
+			"Write: app.WarningLamp.Color = 'g';"
+		],
+		explanation: "The Lamp component displays a coloured circle. Set .Color with a single-letter code in quotes, a full name like 'green', or an RGB triplet like [0 1 0].",
+		gotchas: [
+			"'G' (uppercase) will also work, but keep to lowercase for consistency.",
+			"Do not forget quotes — Color = g (no quotes) would look for a variable called g."
+		]
+	},
+	{
+		id: 'w7-t05',
+		math: 'plot y against t on the app\'s axes',
+		spoken: 'plot t y on UI axes',
+		context: 'Drawing onto a UIAxes component instead of a regular figure.',
+		matlab: 'plot(app.UIAxes, t, y);',
+		accept: ['plot(app.UIAxes,t,y);', 'plot(app.UIAxes, t, y)'],
+		breakdown: [
+			{ symbol: 'target axes', matlab: 'app.UIAxes', note: 'The Axes component — first argument to plot.' },
+			{ symbol: 'x data', matlab: 't', note: 'The horizontal values.' },
+			{ symbol: 'y data', matlab: 'y', note: 'The vertical values.' }
+		],
+		hints: [
+			'When plotting in an app, the axes handle is the FIRST argument.',
+			'Order: plot(axes, x, y).',
+			'Write: plot(app.UIAxes, t, y);'
+		],
+		explanation: 'Outside of apps, plot(t, y) creates a new figure window. Inside an app you already have an Axes component, so pass it as the first argument to draw into it.',
+		gotchas: [
+			'plot(t, y) without the axes argument will pop up a separate figure window — not what you want inside an app.',
+			'xlabel, ylabel, title all also take the axes handle first: xlabel(app.UIAxes, \'time\').'
+		]
+	},
+	{
+		id: 'w7-t06',
+		math: 'inside a button callback, compute force = mass × acceleration and show it in ForceEditField',
+		spoken: 'read mass and acceleration compute force display it',
+		context: 'A full mini-callback body (Newton Calculator from the tutorial).',
+		matlab: 'mass = app.MassEditField.Value;\nacc = app.AccelerationEditField.Value;\nforce = mass*acc;\napp.ForceEditField.Value = force;',
+		accept: ['mass=app.MassEditField.Value;\nacc=app.AccelerationEditField.Value;\nforce=mass*acc;\napp.ForceEditField.Value=force;'],
+		breakdown: [
+			{ symbol: 'read input 1', matlab: 'mass = app.MassEditField.Value;', note: 'Grab the mass.' },
+			{ symbol: 'read input 2', matlab: 'acc = app.AccelerationEditField.Value;', note: 'Grab the acceleration.' },
+			{ symbol: 'compute', matlab: 'force = mass*acc;', note: 'Do the maths in a local variable.' },
+			{ symbol: 'show output', matlab: 'app.ForceEditField.Value = force;', note: 'Write it back to the display.' }
+		],
+		hints: [
+			'Three steps: read inputs, compute, write output.',
+			'Use local variables (mass, acc, force) inside the callback — cleaner than chaining everything.',
+			'End each line with a semicolon to suppress output.'
+		],
+		explanation: 'This is the classic "calculator button" pattern: pull values from input fields, compute, assign to the output field. The display updates when the callback returns.',
+		gotchas: [
+			'Missing semicolons will cause MATLAB to echo values to the Command Window — not broken, just noisy.',
+			'Every reference to a component needs the app. prefix.'
+		]
+	},
+	{
+		id: 'w7-t07',
+		math: 'open the MathWorks website when the button is clicked',
+		spoken: 'web open mathworks url',
+		context: 'Hyperlink-style button that launches a browser.',
+		matlab: "web('https://au.mathworks.com/');",
+		accept: ['web("https://au.mathworks.com/");', "web('https://au.mathworks.com/')"],
+		breakdown: [
+			{ symbol: 'web', matlab: 'web', note: 'Function that opens a URL in the default browser.' },
+			{ symbol: "URL", matlab: "'https://au.mathworks.com/'", note: 'The address, in quotes.' }
+		],
+		hints: [
+			"The function is called web (not open, not browser).",
+			'Put the URL in single quotes.',
+			"Write: web('https://au.mathworks.com/');"
+		],
+		explanation: 'web(url) opens the given URL in the system default browser. Use this for simple "click button, open page" behaviour.',
+		gotchas: [
+			'web() OPENS a page. webread() DOWNLOADS data from a URL — different tools.',
+			'The URL must be a string — remember the quotes.'
+		]
+	},
+	{
+		id: 'w7-t08',
+		math: 'download image from URLEditField and show it on UIAxes',
+		spoken: 'webread url then imshow on UI axes',
+		context: 'Downloading and displaying an image inside an app.',
+		matlab: "data = webread(app.URLEditField.Value);\nimshow(data, 'Parent', app.UIAxes);",
+		accept: ["data=webread(app.URLEditField.Value);\nimshow(data,'Parent',app.UIAxes);"],
+		breakdown: [
+			{ symbol: 'fetch', matlab: 'webread(...)', note: 'Downloads data from a URL.' },
+			{ symbol: 'URL source', matlab: 'app.URLEditField.Value', note: 'The text the user typed.' },
+			{ symbol: 'display', matlab: "imshow(data, 'Parent', app.UIAxes)", note: "The 'Parent' name-value pair targets a specific axes." }
+		],
+		hints: [
+			"webread() downloads and parses image data from a URL.",
+			"imshow needs to know WHERE to draw — use the name-value pair 'Parent', app.UIAxes.",
+			"Unlike plot(), imshow does NOT take the axes as its first argument — it uses 'Parent'."
+		],
+		explanation: "plot() takes the axes as its first positional argument, but imshow() uses the name-value pair ('Parent', app.UIAxes) instead. That's a MATLAB quirk worth memorising.",
+		gotchas: [
+			"imshow(app.UIAxes, data) does NOT work — you must use 'Parent'.",
+			"If webread fails (bad URL, no internet), MATLAB throws an error. Consider wrapping in try/catch for robustness."
+		]
+	}
+];
+
 const allTranslations: Record<number, TranslationData[]> = {
 	1: week1Translations,
 	2: week2Translations,
 	3: week3Translations,
 	4: week4Translations,
 	5: week5Translations,
-	6: week6Translations
+	6: week6Translations,
+	7: week7Translations
 };
 
 export function getWeekTranslations(weekNum: number): TranslationData[] {

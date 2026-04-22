@@ -14,7 +14,8 @@
 		{ num: 3, title: 'Math Operations' },
 		{ num: 4, title: '2D Plotting' },
 		{ num: 5, title: 'Programming' },
-		{ num: 6, title: 'Data I/O & Functions' }
+		{ num: 6, title: 'Data I/O & Functions' },
+		{ num: 7, title: 'App Designer' }
 	];
 
 	let menuOpen = $state(false);
