@@ -1,6 +1,8 @@
 export type { CardData, QuizData } from './week1';
 export { weeks, getWeek } from './weeks';
 export type { WeekMeta } from './weeks';
+export { getWeekTranslations, getAllTranslations } from './translations';
+export type { TranslationData, BreakdownPart } from './translations';
 
 import { week1Cards, week1Quiz } from './week1';
 import { week2Cards, week2Quiz } from './week2';
