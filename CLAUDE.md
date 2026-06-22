@@ -1,8 +1,21 @@
-# MATLAB Study Buddy - Project Context
+# Study Buddy - Project Context
 
 ## Purpose
 
-Accessible study app for a friend with ADHD, dyslexia, and autism studying an Associate Degree in Engineering Technology at RMIT University. The course is **OENG1298 - Introduction to Digital Fundamentals**, which teaches MATLAB programming.
+Accessible **multi-subject** study app for a friend with ADHD, dyslexia, and autism studying an Associate Degree in Engineering Technology at RMIT University.
+
+The app is a dashboard over four subjects, each following the **same structure and features** (modules → flashcards / quiz / cheat sheet, plus optional translate / lab):
+
+| Subject | Slug | Status |
+|---------|------|--------|
+| Mathematics | `maths` | placeholder (no content yet) |
+| Digital Fundamentals (MATLAB) — **OENG1298** | `matlab` | fully populated (Modules 1–7) |
+| Engineering Sciences | `eng-science` | placeholder |
+| Engineering Materials | `eng-materials` | placeholder |
+
+**Terminology:** a unit of study within a subject is a **Module** (the UI says "Module N"). The MATLAB content was originally authored as "weeks", so some internal data files (`weekN.ts`, `weeks.ts`) and translation/lab getters still use the `week` name — these are the MATLAB module data.
+
+To add content for a placeholder subject, populate its entry in `src/lib/data/subjects.ts` (`content` map) with `modules` metadata + per-module `cards`/`quiz` (and optionally wire translations/labs).
 
 ## Course Content (from PDFs in /Desktop/RMIT/Week 1-6/)
 
@@ -29,24 +42,37 @@ Each week has 3 PDFs: Tutorial Note, Simulation Lab Note, and Solution.
 
 ### Routing Structure
 
-All routes need `+page.svelte` files created:
-
 ```
 src/routes/
-  +page.svelte              # Home - week selector with progress overview
-  +layout.svelte            # EXISTS - app shell with Header, SettingsPanel, FocusTimer
-  week/[weekNum]/
-    +page.svelte            # Week overview (links to flashcards/quiz/cheatsheet)
-    flashcards/+page.svelte # FlashcardDeck for the week
-    quiz/+page.svelte       # QuizMode for the week
-    cheatsheet/+page.svelte # Quick reference sheet
-  review/+page.svelte       # Spaced repetition review (due cards across all weeks)
-  settings/+page.svelte     # Full settings page
+  +page.svelte                              # Dashboard - subject grid + global streak/due
+  +layout.svelte                            # App shell with Header, SettingsPanel, FocusTimer
+  [subject]/
+    +page.svelte                            # Subject home - module grid (empty-state for placeholders)
+    module/[moduleNum]/
+      +page.svelte                          # Module overview (links to study modes)
+      flashcards/+page.svelte               # FlashcardDeck for the module
+      quiz/+page.svelte                      # QuizMode for the module
+      cheatsheet/+page.svelte                # Quick reference sheet
+      translate/+page.svelte                 # MathTranslator (MATLAB only)
+      lab/+page.svelte                       # LabWalkthrough (MATLAB only)
+  review/+page.svelte                       # Spaced repetition review (due cards across ALL subjects)
+  settings/+page.svelte                     # Full settings page
 ```
+
+Pure SPA (`fallback: 'index.html'`), so `[subject]`/`[moduleNum]` are client-rendered — no prerender entries. Invalid subject/module slugs render a not-found state.
 
 ### Data Layer
 
-Data files go in `src/lib/data/` as TypeScript modules exporting typed arrays.
+`src/lib/data/subjects.ts` is the multi-subject registry + central API:
+- `subjects: SubjectMeta[]` (slug, title, shortTitle, icon, description, courseCode?) and `getSubject(slug)`
+- `content: Record<slug, { modules, cards, quiz }>` — MATLAB is populated from the existing `weekN.ts`/`weeks.ts` files; other subjects are empty placeholders
+- Subject-aware getters: `getModules(subject)`, `getModule(subject, num)`, `getModuleCards(subject, num)`, `getModuleQuiz(subject, num)`, `getModuleTranslations(subject, num)`, `getModuleLabs(subject, num)` (translations/labs return `[]` for non-MATLAB)
+- `DeckCard` = `CardData & { subjectSlug, moduleNum }`; `toDeckCards(subject, num, cards)` tags cards so a deck can record progress; `getAllDeckCards()` (global review); `cardKey(subject, cardId)` → namespaced progress key like `"matlab:w1-c01"`
+- `ModuleMeta` is an alias of the original `WeekMeta`
+
+`src/lib/data/index.ts` is the barrel — import everything from `$lib/data`.
+
+The per-week data files (`weekN.ts`, `weeks.ts`, `translations.ts`, `labs.ts`) are the MATLAB module content and keep their original `week` naming/IDs (`w{n}-c{nn}`).
 
 **Flashcard data shape:**
 ```typescript
@@ -88,12 +114,12 @@ interface WeekMeta {
 ### Existing Components (all working, do not modify unless needed)
 
 **Layout:**
-- `Header.svelte` - Sticky nav with week links (W1-W6), Home, Review. Mobile hamburger menu. Hardcoded 6 weeks.
+- `Header.svelte` - Sticky nav: Dashboard, one link per subject (from `subjects` registry), Review. Mobile hamburger menu.
 
 **Study:**
 - `Flashcard.svelte` - Flip card with 3D animation (reduced-motion fallback), TTS, hints, code blocks, spaced-repetition rating (again/hard/good/easy)
-- `FlashcardDeck.svelte` - Card navigation, shuffle, progress bar, arrow key nav. Props: `cards: CardData[], weekNum: number, topicName?: string`
-- `QuizMode.svelte` - Quiz flow with progress, scoring, results screen. Props: `questions: QuizData[], weekNum: number`
+- `FlashcardDeck.svelte` - Card navigation, shuffle, progress bar, arrow key nav. Props: `cards: DeckCard[], topicName?: string` (each `DeckCard` carries its own `subjectSlug`/`moduleNum`, so a mixed-subject review deck records progress correctly)
+- `QuizMode.svelte` - Quiz flow with progress, scoring, results screen. Props: `questions: QuizData[], subject: string, moduleNum: number`
 - `QuizQuestion.svelte` - Handles multiple-choice (radio buttons), fill-blank, code-output question types
 - `CodeBlock.svelte` - MATLAB syntax highlighter (keywords, builtins, comments, strings, numbers, >>)
 
@@ -104,7 +130,10 @@ interface WeekMeta {
 **Progress:**
 - `ProgressBar.svelte` - Props: value (0-100), label?, size? ('sm'|'md')
 - `StreakCounter.svelte` - Shows flame + streak days from progressStore
-- `WeekProgress.svelte` - Card with flashcard progress bar, quiz best score, links to flashcards/quiz/cheatsheet. Props: weekNum, title
+- `ModuleProgress.svelte` - Card with flashcard progress bar, quiz best score, links to flashcards/quiz/cheatsheet. Props: `subjectSlug, moduleNum, title`. (Used on the subject home page; replaced the old `WeekProgress`.)
+
+**Dashboard:**
+- `SubjectCard.svelte` - Dashboard tile per subject: icon, title, course code, aggregated progress bar, module count. Renders a "Content coming soon" state for placeholder subjects. Props: `subject: SubjectMeta`
 
 **Timer:**
 - `FocusTimer.svelte` - Pomodoro timer (25min study / 5min break), floating bottom-right, expandable with SVG progress ring
@@ -117,9 +146,9 @@ interface WeekMeta {
 - Applies theme/font/spacing to document.documentElement via data attributes + CSS custom properties
 
 **progressStore** (`progress.svelte.ts`):
-- Persists to localStorage key `'matlab-study-progress'`
-- `init()`, `recordCardReview(cardId, quality)`, `markCardViewed(cardId, weekNum)`, `setWeekTotal(weekNum, total)`, `recordQuizScore(weekNum, score)`, `getDueCards()`, `getWeekStats(weekNum)`
-- Card IDs follow format `w{weekNum}-c{cardNum}` for flashcard tracking
+- Persists to localStorage key `'matlab-study-progress-v2'` (v2 = subject-namespaced; old un-namespaced data is intentionally reset)
+- All keys are namespaced by subject: card keys `"{subject}:{cardId}"` (use `cardKey()`), module-stats keys `"{subject}:{moduleNum}"`
+- `init()`, `recordCardReview(cardKey, quality)`, `markCardViewed(cardKey, subject, moduleNum)`, `setModuleTotal(subject, moduleNum, total)`, `recordQuizScore(subject, moduleNum, score)`, `getDueCards()` (returns namespaced keys), `getModuleStats(subject, moduleNum)`
 - Streak tracking (consecutive study days)
 
 **timerStore** (`timer.svelte.ts`):
@@ -152,30 +181,19 @@ npm run preview  # Preview built site
 
 Static adapter with `fallback: 'index.html'` for SPA client-side routing.
 
-## Remaining Work
+## Status & Remaining Work
 
-### Phase 1: Data Files (create in src/lib/data/)
-- [ ] `weeks.ts` - Week metadata (titles, descriptions, topics)
-- [ ] `week1.ts` - Flashcards + quiz questions for MATLAB Basics
-- [ ] `week2.ts` - Flashcards + quiz for Vectors & Matrices
-- [ ] `week3.ts` - Flashcards + quiz for Array Operations
-- [ ] `week4.ts` - Flashcards + quiz for 2D Plotting
-- [ ] `week5.ts` - Flashcards + quiz for Programming
-- [ ] `week6.ts` - Flashcards + quiz for Data I/O & Functions
+**Done:** Multi-subject restructure (dashboard → subjects → modules → study modes), MATLAB content (Modules 1–7: flashcards, quiz, cheat sheet, translate, lab), subject-namespaced progress, all route pages, settings.
 
-### Phase 2: Route Pages (create +page.svelte files)
-- [ ] Home page (`/`) - Week grid with WeekProgress cards, StreakCounter, due cards summary
-- [ ] Week overview (`/week/[weekNum]`) - Week details with study mode links
-- [ ] Flashcards page (`/week/[weekNum]/flashcards`) - FlashcardDeck with week data
-- [ ] Quiz page (`/week/[weekNum]/quiz`) - QuizMode with week questions
-- [ ] Cheatsheet page (`/week/[weekNum]/cheatsheet`) - Quick reference for the week
-- [ ] Review page (`/review`) - Spaced repetition review of due cards across all weeks
-- [ ] Settings page (`/settings`) - Full settings (reuse SettingsPanel content)
-
-### Phase 3: Polish
+**Remaining:**
+- [ ] Author content for the 3 placeholder subjects (`maths`, `eng-science`, `eng-materials`) — add module metadata + cards/quiz to their `content` entries in `subjects.ts`. Decide per subject whether translate/lab modes apply.
 - [ ] Download OpenDyslexic + Atkinson Hyperlegible woff2 fonts to /static/fonts/
-- [ ] Add +page.ts with prerender = true for static generation
-- [ ] Test all accessibility features (keyboard nav, screen reader, TTS, themes)
+- [ ] Full accessibility pass (keyboard nav, screen reader, TTS, themes) across the new dashboard/subject pages
+
+### Adding content to a placeholder subject
+1. Create per-module data (cards/quiz) following the `CardData`/`QuizData` shapes; reuse the `w{n}-c{nn}` ID convention.
+2. In `subjects.ts`, replace that subject's `emptyContent()` with a `SubjectContent` containing `modules` (`ModuleMeta[]`) + `cards`/`quiz` records keyed by module number.
+3. No routing/store changes needed — the generic `[subject]/module/[moduleNum]` routes pick it up automatically.
 
 ## Accessibility Design Principles
 

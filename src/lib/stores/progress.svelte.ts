@@ -1,27 +1,32 @@
 import { loadFromStorage, saveToStorage } from '$lib/utils/localStorage';
 import { type CardProgress, createDefaultProgress, reviewCard, isDueForReview } from '$lib/utils/spacedRepetition';
 
-export interface WeekStats {
+export interface ModuleStats {
 	flashcardsViewed: number;
 	flashcardsTotal: number;
 	quizBestScore: number | null;
 }
 
 export interface ProgressData {
+	/** Keyed by namespaced card key: "{subject}:{cardId}" e.g. "matlab:w1-c01". */
 	cards: Record<string, CardProgress>;
-	weeks: Record<string, WeekStats>;
+	/** Keyed by module key: "{subject}:{moduleNum}" e.g. "matlab:1". */
+	modules: Record<string, ModuleStats>;
 	streak: number;
 	lastStudyDate: string;
 }
 
-const STORAGE_KEY = 'matlab-study-progress';
+// v2: keys are namespaced by subject (multi-subject restructure). Old data is intentionally reset.
+const STORAGE_KEY = 'matlab-study-progress-v2';
 
 const defaults: ProgressData = {
 	cards: {},
-	weeks: {},
+	modules: {},
 	streak: 0,
 	lastStudyDate: ''
 };
+
+const moduleKey = (subject: string, moduleNum: number) => `${subject}:${moduleNum}`;
 
 function createProgressStore() {
 	let data = $state<ProgressData>({ ...defaults });
@@ -67,74 +72,86 @@ function createProgressStore() {
 		save();
 	}
 
-	function recordCardReview(cardId: string, quality: 'again' | 'hard' | 'good' | 'easy') {
-		const existing = data.cards[cardId] || createDefaultProgress();
-		data.cards[cardId] = reviewCard(existing, quality);
+	/** key must be a namespaced card key from cardKey(subject, cardId). */
+	function recordCardReview(key: string, quality: 'again' | 'hard' | 'good' | 'easy') {
+		const existing = data.cards[key] || createDefaultProgress();
+		data.cards[key] = reviewCard(existing, quality);
 		markStudyToday();
 		save();
 	}
 
-	function markCardViewed(cardId: string, weekNum: number) {
-		if (!data.cards[cardId]) {
-			data.cards[cardId] = createDefaultProgress();
+	/** key must be a namespaced card key; subject + moduleNum identify the module bucket. */
+	function markCardViewed(key: string, subject: string, moduleNum: number) {
+		if (!data.cards[key]) {
+			data.cards[key] = createDefaultProgress();
 		}
 
-		const weekKey = String(weekNum);
-		if (!data.weeks[weekKey]) {
-			data.weeks[weekKey] = { flashcardsViewed: 0, flashcardsTotal: 0, quizBestScore: null };
+		const mk = moduleKey(subject, moduleNum);
+		if (!data.modules[mk]) {
+			data.modules[mk] = { flashcardsViewed: 0, flashcardsTotal: 0, quizBestScore: null };
 		}
 
-		// Count unique cards viewed for this week
-		const weekCardIds = Object.keys(data.cards).filter(id => id.startsWith(`w${weekNum}-c`));
-		data.weeks[weekKey].flashcardsViewed = weekCardIds.length;
+		// Count unique cards viewed for this subject + module.
+		const prefix = `${subject}:w${moduleNum}-c`;
+		const viewed = Object.keys(data.cards).filter((id) => id.startsWith(prefix));
+		data.modules[mk].flashcardsViewed = viewed.length;
 
 		markStudyToday();
 		save();
 	}
 
-	function setWeekTotal(weekNum: number, total: number) {
-		const weekKey = String(weekNum);
-		if (!data.weeks[weekKey]) {
-			data.weeks[weekKey] = { flashcardsViewed: 0, flashcardsTotal: total, quizBestScore: null };
+	function setModuleTotal(subject: string, moduleNum: number, total: number) {
+		const mk = moduleKey(subject, moduleNum);
+		if (!data.modules[mk]) {
+			data.modules[mk] = { flashcardsViewed: 0, flashcardsTotal: total, quizBestScore: null };
 		} else {
-			data.weeks[weekKey].flashcardsTotal = total;
+			data.modules[mk].flashcardsTotal = total;
 		}
 		save();
 	}
 
-	function recordQuizScore(weekNum: number, score: number) {
-		const weekKey = String(weekNum);
-		if (!data.weeks[weekKey]) {
-			data.weeks[weekKey] = { flashcardsViewed: 0, flashcardsTotal: 0, quizBestScore: score };
+	function recordQuizScore(subject: string, moduleNum: number, score: number) {
+		const mk = moduleKey(subject, moduleNum);
+		if (!data.modules[mk]) {
+			data.modules[mk] = { flashcardsViewed: 0, flashcardsTotal: 0, quizBestScore: score };
 		} else {
-			const current = data.weeks[weekKey].quizBestScore;
+			const current = data.modules[mk].quizBestScore;
 			if (current === null || score > current) {
-				data.weeks[weekKey].quizBestScore = score;
+				data.modules[mk].quizBestScore = score;
 			}
 		}
 		markStudyToday();
 		save();
 	}
 
+	/** Returns namespaced card keys that are due for review (across all subjects). */
 	function getDueCards(): string[] {
 		return Object.entries(data.cards)
 			.filter(([, progress]) => isDueForReview(progress))
 			.map(([id]) => id);
 	}
 
-	function getWeekStats(weekNum: number): WeekStats {
-		return data.weeks[String(weekNum)] || { flashcardsViewed: 0, flashcardsTotal: 0, quizBestScore: null };
+	function getModuleStats(subject: string, moduleNum: number): ModuleStats {
+		return (
+			data.modules[moduleKey(subject, moduleNum)] || {
+				flashcardsViewed: 0,
+				flashcardsTotal: 0,
+				quizBestScore: null
+			}
+		);
 	}
 
 	return {
-		get data() { return data; },
+		get data() {
+			return data;
+		},
 		init,
 		recordCardReview,
 		markCardViewed,
-		setWeekTotal,
+		setModuleTotal,
 		recordQuizScore,
 		getDueCards,
-		getWeekStats
+		getModuleStats
 	};
 }
 

@@ -4,30 +4,31 @@
 	import ProgressBar from './ProgressBar.svelte';
 
 	interface Props {
-		weekNum: number;
+		subjectSlug: string;
+		moduleNum: number;
 		title: string;
 	}
 
-	let { weekNum, title }: Props = $props();
-	let stats = $derived(progressStore.getWeekStats(weekNum));
+	let { subjectSlug, moduleNum, title }: Props = $props();
+	let stats = $derived(progressStore.getModuleStats(subjectSlug, moduleNum));
 	let pct = $derived(stats.flashcardsTotal > 0 ? (stats.flashcardsViewed / stats.flashcardsTotal) * 100 : 0);
 </script>
 
-<div class="week-progress card">
-	<h3>Week {weekNum}: {title}</h3>
+<div class="module-progress card">
+	<h3>Module {moduleNum}: {title}</h3>
 	<ProgressBar value={pct} label="Flashcards" />
 	{#if stats.quizBestScore !== null}
 		<p class="quiz-score">Best quiz score: <strong>{stats.quizBestScore}%</strong></p>
 	{/if}
-	<div class="week-actions">
-		<a href="{base}/week/{weekNum}/flashcards" class="btn-primary action-btn">Flashcards</a>
-		<a href="{base}/week/{weekNum}/quiz" class="btn-secondary action-btn">Quiz</a>
-		<a href="{base}/week/{weekNum}/cheatsheet" class="btn-secondary action-btn">Cheat Sheet</a>
+	<div class="module-actions">
+		<a href="{base}/{subjectSlug}/module/{moduleNum}/flashcards" class="btn-primary action-btn">Flashcards</a>
+		<a href="{base}/{subjectSlug}/module/{moduleNum}/quiz" class="btn-secondary action-btn">Quiz</a>
+		<a href="{base}/{subjectSlug}/module/{moduleNum}/cheatsheet" class="btn-secondary action-btn">Cheat Sheet</a>
 	</div>
 </div>
 
 <style>
-	.week-progress h3 {
+	.module-progress h3 {
 		margin-bottom: var(--space-sm);
 	}
 
@@ -37,7 +38,7 @@
 		margin-top: var(--space-sm);
 	}
 
-	.week-actions {
+	.module-actions {
 		display: flex;
 		gap: var(--space-sm);
 		margin-top: var(--space-md);

@@ -2,23 +2,14 @@
 	import Flashcard from './Flashcard.svelte';
 	import ProgressBar from '../progress/ProgressBar.svelte';
 	import { progressStore } from '$lib/stores/progress.svelte';
-
-	interface CardData {
-		id: string;
-		type: 'concept' | 'code' | 'list';
-		front: string;
-		back: string | string[];
-		code?: string;
-		hint?: string;
-	}
+	import { cardKey, type DeckCard } from '$lib/data';
 
 	interface Props {
-		cards: CardData[];
-		weekNum: number;
+		cards: DeckCard[];
 		topicName?: string;
 	}
 
-	let { cards, weekNum, topicName }: Props = $props();
+	let { cards, topicName }: Props = $props();
 	let currentIndex = $state(0);
 	let shuffled = $state(false);
 	let displayCards = $state([...cards]);
@@ -57,8 +48,9 @@
 	}
 
 	function handleRate(quality: 'again' | 'hard' | 'good' | 'easy') {
-		progressStore.recordCardReview(current.id, quality);
-		progressStore.markCardViewed(current.id, weekNum);
+		const key = cardKey(current.subjectSlug, current.id);
+		progressStore.recordCardReview(key, quality);
+		progressStore.markCardViewed(key, current.subjectSlug, current.moduleNum);
 		// Auto-advance on rating
 		if (currentIndex < displayCards.length - 1) {
 			setTimeout(() => next(), 300);
@@ -93,7 +85,7 @@
 	</div>
 
 	{#if current}
-		{#key current.id}
+		{#key cardKey(current.subjectSlug, current.id)}
 			<Flashcard
 				front={current.front}
 				back={current.back}

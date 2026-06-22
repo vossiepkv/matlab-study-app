@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { base } from '$app/paths';
+	import { subjects } from '$lib/data';
 
 	interface Props {
 		onSettingsClick: () => void;
@@ -8,23 +9,13 @@
 
 	let { onSettingsClick }: Props = $props();
 
-	const weeks = [
-		{ num: 1, title: 'MATLAB Basics' },
-		{ num: 2, title: 'Vectors & Matrices' },
-		{ num: 3, title: 'Math Operations' },
-		{ num: 4, title: '2D Plotting' },
-		{ num: 5, title: 'Programming' },
-		{ num: 6, title: 'Data I/O & Functions' },
-		{ num: 7, title: 'App Designer' }
-	];
-
 	let menuOpen = $state(false);
 </script>
 
 <header class="site-header">
 	<div class="header-inner container">
 		<a href="{base}/" class="logo">
-			<span class="logo-text">MATLAB Study Buddy</span>
+			<span class="logo-text">Study Buddy</span>
 		</a>
 
 		<nav class="nav-main" aria-label="Main navigation">
@@ -44,15 +35,15 @@
 			</button>
 
 			<ul class="nav-links" class:open={menuOpen}>
-				<li><a href="{base}/" class:active={page.url.pathname === (base || '/')} onclick={() => { menuOpen = false; }}>Home</a></li>
-				{#each weeks as week}
+				<li><a href="{base}/" class:active={page.url.pathname === (base || '/')} onclick={() => { menuOpen = false; }}>Dashboard</a></li>
+				{#each subjects as subject}
 					<li>
 						<a
-							href="{base}/week/{week.num}"
-							class:active={page.url.pathname.startsWith(`${base}/week/${week.num}`)}
+							href="{base}/{subject.slug}"
+							class:active={page.url.pathname.startsWith(`${base}/${subject.slug}`)}
 							onclick={() => { menuOpen = false; }}
 						>
-							W{week.num}
+							{subject.shortTitle}
 						</a>
 					</li>
 				{/each}

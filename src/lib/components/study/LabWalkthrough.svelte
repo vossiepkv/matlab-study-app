@@ -5,10 +5,10 @@
 
 	interface Props {
 		exercises: LabExercise[];
-		weekNum: number;
+		moduleNum: number;
 	}
 
-	let { exercises, weekNum }: Props = $props();
+	let { exercises, moduleNum }: Props = $props();
 
 	let index = $state(0);
 	let stepsRevealed = $state(0);
@@ -57,7 +57,7 @@
 		<header class="walk-header">
 			<div class="meta">
 				<span class="counter">Exercise {index + 1} / {total}</span>
-				<span class="week-tag">Week {weekNum}</span>
+				<span class="week-tag">Module {moduleNum}</span>
 			</div>
 			<div class="exercise-picker" role="tablist" aria-label="Jump to exercise">
 				{#each exercises as ex, i}

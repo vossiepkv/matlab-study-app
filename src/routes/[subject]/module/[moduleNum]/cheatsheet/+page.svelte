@@ -1,26 +1,28 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { base } from '$app/paths';
-	import { getWeek, getWeekCards } from '$lib/data';
+	import { getSubject, getModule, getModuleCards } from '$lib/data';
 	import CodeBlock from '$lib/components/study/CodeBlock.svelte';
 	import TextToSpeech from '$lib/components/accessibility/TextToSpeech.svelte';
 	import { settingsStore } from '$lib/stores/settings.svelte';
 
-	let weekNum = $derived(Number(page.params.weekNum));
-	let week = $derived(getWeek(weekNum));
-	let cards = $derived(getWeekCards(weekNum));
+	let slug = $derived(page.params.subject);
+	let moduleNum = $derived(Number(page.params.moduleNum));
+	let subject = $derived(getSubject(slug));
+	let mod = $derived(getModule(slug, moduleNum));
+	let cards = $derived(getModuleCards(slug, moduleNum));
 
-	let conceptCards = $derived(cards.filter(c => c.type === 'concept'));
-	let codeCards = $derived(cards.filter(c => c.type === 'code'));
-	let listCards = $derived(cards.filter(c => c.type === 'list'));
+	let conceptCards = $derived(cards.filter((c) => c.type === 'concept'));
+	let codeCards = $derived(cards.filter((c) => c.type === 'code'));
+	let listCards = $derived(cards.filter((c) => c.type === 'list'));
 </script>
 
-{#if week && cards.length > 0}
+{#if subject && mod && cards.length > 0}
 	<div class="cheatsheet-page">
 		<header class="page-header">
-			<a href="{base}/week/{weekNum}" class="back-link">Week {weekNum}</a>
-			<h1>Cheat Sheet: {week.title}</h1>
-			<p class="page-description">Quick reference for all Week {weekNum} concepts</p>
+			<a href="{base}/{slug}/module/{moduleNum}" class="back-link">Module {moduleNum}</a>
+			<h1>Cheat Sheet: {mod.title}</h1>
+			<p class="page-description">Quick reference for all Module {moduleNum} concepts</p>
 		</header>
 
 		{#if conceptCards.length > 0}
@@ -110,15 +112,15 @@
 		{/if}
 
 		<div class="cheat-footer">
-			<a href="{base}/week/{weekNum}/flashcards" class="btn-secondary">Practice Flashcards</a>
-			<a href="{base}/week/{weekNum}/quiz" class="btn-secondary">Take Quiz</a>
+			<a href="{base}/{slug}/module/{moduleNum}/flashcards" class="btn-secondary">Practice Flashcards</a>
+			<a href="{base}/{slug}/module/{moduleNum}/quiz" class="btn-secondary">Take Quiz</a>
 		</div>
 	</div>
 {:else}
 	<div class="not-found">
 		<h1>No cheat sheet found</h1>
-		<p>No content available for Week {weekNum}.</p>
-		<a href="{base}/" class="btn-primary">Back to Home</a>
+		<p>No content available for this module.</p>
+		<a href="{base}/" class="btn-primary">Back to Dashboard</a>
 	</div>
 {/if}
 

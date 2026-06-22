@@ -5,11 +5,11 @@
 
 	interface Props {
 		items: TranslationData[];
-		weekNum: number;
+		moduleNum: number;
 		topicName?: string;
 	}
 
-	let { items, weekNum, topicName }: Props = $props();
+	let { items, moduleNum, topicName }: Props = $props();
 
 	let index = $state(0);
 	let userAnswer = $state('');
@@ -186,7 +186,7 @@
 
 		<nav class="nav-row">
 			<button class="btn-ghost" onclick={prev} disabled={index === 0}>← Previous</button>
-			<span class="nav-info">Week {weekNum}</span>
+			<span class="nav-info">Module {moduleNum}</span>
 			<button class="btn-ghost" onclick={next} disabled={index >= total - 1}>Next →</button>
 		</nav>
 	</div>

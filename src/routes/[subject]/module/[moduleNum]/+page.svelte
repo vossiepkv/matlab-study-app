@@ -1,37 +1,46 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { base } from '$app/paths';
-	import { getWeek, getWeekCards, getWeekQuiz, getWeekTranslations, getWeekLabs } from '$lib/data';
+	import {
+		getSubject,
+		getModule,
+		getModuleCards,
+		getModuleQuiz,
+		getModuleTranslations,
+		getModuleLabs
+	} from '$lib/data';
 	import { progressStore } from '$lib/stores/progress.svelte';
 
-	let weekNum = $derived(Number(page.params.weekNum));
-	let week = $derived(getWeek(weekNum));
-	let cards = $derived(getWeekCards(weekNum));
-	let quiz = $derived(getWeekQuiz(weekNum));
-	let translations = $derived(getWeekTranslations(weekNum));
-	let labs = $derived(getWeekLabs(weekNum));
-	let stats = $derived(progressStore.getWeekStats(weekNum));
+	let slug = $derived(page.params.subject);
+	let moduleNum = $derived(Number(page.params.moduleNum));
+	let subject = $derived(getSubject(slug));
+	let mod = $derived(getModule(slug, moduleNum));
+	let cards = $derived(getModuleCards(slug, moduleNum));
+	let quiz = $derived(getModuleQuiz(slug, moduleNum));
+	let translations = $derived(getModuleTranslations(slug, moduleNum));
+	let labs = $derived(getModuleLabs(slug, moduleNum));
+	let stats = $derived(progressStore.getModuleStats(slug, moduleNum));
 </script>
 
-{#if week}
-	<div class="week-overview">
-		<header class="week-header">
-			<a href="{base}/" class="back-link">Home</a>
-			<h1>Week {week.num}: {week.title}</h1>
-			<p class="week-description">{week.description}</p>
+{#if subject && mod}
+	<div class="module-overview">
+		<header class="module-header">
+			<a href="{base}/{slug}" class="back-link">{subject.title}</a>
+			<h1>Module {mod.num}: {mod.title}</h1>
+			<p class="module-description">{mod.description}</p>
 		</header>
 
 		<div class="topics-card card">
 			<h2>Topics Covered</h2>
 			<ul class="topic-list">
-				{#each week.topics as topic}
+				{#each mod.topics as topic}
 					<li>{topic}</li>
 				{/each}
 			</ul>
 		</div>
 
 		<div class="study-modes">
-			<a href="{base}/week/{weekNum}/flashcards" class="mode-card card">
+			<a href="{base}/{slug}/module/{moduleNum}/flashcards" class="mode-card card">
 				<div class="mode-icon">&#x1F4C7;</div>
 				<h3>Flashcards</h3>
 				<p>{cards.length} cards</p>
@@ -40,7 +49,7 @@
 				{/if}
 			</a>
 
-			<a href="{base}/week/{weekNum}/quiz" class="mode-card card">
+			<a href="{base}/{slug}/module/{moduleNum}/quiz" class="mode-card card">
 				<div class="mode-icon">&#x2753;</div>
 				<h3>Quiz</h3>
 				<p>{quiz.length} questions</p>
@@ -50,7 +59,7 @@
 			</a>
 
 			{#if translations.length > 0}
-				<a href="{base}/week/{weekNum}/translate" class="mode-card card">
+				<a href="{base}/{slug}/module/{moduleNum}/translate" class="mode-card card">
 					<div class="mode-icon">&#x1F524;</div>
 					<h3>Translate</h3>
 					<p>{translations.length} math → code</p>
@@ -58,14 +67,14 @@
 			{/if}
 
 			{#if labs.length > 0}
-				<a href="{base}/week/{weekNum}/lab" class="mode-card card">
+				<a href="{base}/{slug}/module/{moduleNum}/lab" class="mode-card card">
 					<div class="mode-icon">&#x1F9EA;</div>
 					<h3>Lab Walkthrough</h3>
 					<p>{labs.length} exercises</p>
 				</a>
 			{/if}
 
-			<a href="{base}/week/{weekNum}/cheatsheet" class="mode-card card">
+			<a href="{base}/{slug}/module/{moduleNum}/cheatsheet" class="mode-card card">
 				<div class="mode-icon">&#x1F4CB;</div>
 				<h3>Cheat Sheet</h3>
 				<p>Quick reference</p>
@@ -74,20 +83,20 @@
 	</div>
 {:else}
 	<div class="not-found">
-		<h1>Week not found</h1>
-		<p>No content available for Week {weekNum}.</p>
-		<a href="{base}/" class="btn-primary">Back to Home</a>
+		<h1>Module not found</h1>
+		<p>No content available for this module.</p>
+		<a href="{base}/" class="btn-primary">Back to Dashboard</a>
 	</div>
 {/if}
 
 <style>
-	.week-overview {
+	.module-overview {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-xl);
 	}
 
-	.week-header {
+	.module-header {
 		padding-bottom: var(--space-md);
 		border-bottom: 1px solid var(--color-border-light);
 	}
@@ -102,11 +111,11 @@
 		color: var(--color-primary);
 	}
 
-	.week-header h1 {
+	.module-header h1 {
 		margin-top: var(--space-sm);
 	}
 
-	.week-description {
+	.module-description {
 		color: var(--color-text-secondary);
 		margin-top: var(--space-xs);
 	}

@@ -1,49 +1,48 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import { weeks } from '$lib/data';
-	import WeekProgress from '$lib/components/progress/WeekProgress.svelte';
+	import { subjects, getModules, getModuleCards } from '$lib/data';
+	import SubjectCard from '$lib/components/dashboard/SubjectCard.svelte';
 	import StreakCounter from '$lib/components/progress/StreakCounter.svelte';
 	import { progressStore } from '$lib/stores/progress.svelte';
-	import { getWeekCards } from '$lib/data';
-
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		// Set totals for each week
-		for (const week of weeks) {
-			const cards = getWeekCards(week.num);
-			progressStore.setWeekTotal(week.num, cards.length);
+		// Seed flashcard totals for every module across every subject.
+		for (const subject of subjects) {
+			for (const m of getModules(subject.slug)) {
+				progressStore.setModuleTotal(subject.slug, m.num, getModuleCards(subject.slug, m.num).length);
+			}
 		}
 	});
 
 	let dueCount = $derived(progressStore.getDueCards().length);
 </script>
 
-<div class="home">
+<div class="dashboard">
 	<div class="hero">
-		<h1>MATLAB Study Buddy</h1>
-		<p class="subtitle">Your accessible study companion for OENG1298 — Introduction to Digital Fundamentals</p>
+		<h1>Study Buddy</h1>
+		<p class="subtitle">Your accessible study companion for the Associate Degree in Engineering Technology.</p>
 		<StreakCounter />
 	</div>
 
 	{#if dueCount > 0}
 		<a href="{base}/review" class="review-banner card">
 			<span class="review-count">{dueCount}</span>
-			<span class="review-text">card{dueCount === 1 ? '' : 's'} due for review</span>
+			<span class="review-text">card{dueCount === 1 ? '' : 's'} due for review across your subjects</span>
 			<span class="review-action">Review Now</span>
 		</a>
 	{/if}
 
-	<h2>Weekly Topics</h2>
-	<div class="week-grid">
-		{#each weeks as week}
-			<WeekProgress weekNum={week.num} title={week.title} />
+	<h2>Your Subjects</h2>
+	<div class="subject-grid">
+		{#each subjects as subject}
+			<SubjectCard {subject} />
 		{/each}
 	</div>
 </div>
 
 <style>
-	.home {
+	.dashboard {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-xl);
@@ -63,7 +62,7 @@
 	.subtitle {
 		color: var(--color-text-secondary);
 		font-size: var(--font-size-lg);
-		max-width: 500px;
+		max-width: 540px;
 		margin: 0 auto var(--space-lg);
 	}
 
@@ -120,7 +119,7 @@
 		margin-bottom: var(--space-sm);
 	}
 
-	.week-grid {
+	.subject-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 		gap: var(--space-lg);

@@ -18,10 +18,11 @@
 
 	interface Props {
 		questions: QuizData[];
-		weekNum: number;
+		subject: string;
+		moduleNum: number;
 	}
 
-	let { questions, weekNum }: Props = $props();
+	let { questions, subject, moduleNum }: Props = $props();
 	let currentIndex = $state(0);
 	let correctCount = $state(0);
 	let answeredCount = $state(0);
@@ -43,7 +44,7 @@
 			showNext = false;
 		} else {
 			finished = true;
-			progressStore.recordQuizScore(weekNum, score);
+			progressStore.recordQuizScore(subject, moduleNum, score);
 		}
 	}
 
@@ -87,7 +88,7 @@
 			{/if}
 			<div class="result-actions">
 				<button class="btn-primary" onclick={retry}>Try Again</button>
-				<a href="{base}/week/{weekNum}/flashcards" class="btn-secondary result-link">Review Flashcards</a>
+				<a href="{base}/{subject}/module/{moduleNum}/flashcards" class="btn-secondary result-link">Review Flashcards</a>
 			</div>
 		</div>
 	{/if}

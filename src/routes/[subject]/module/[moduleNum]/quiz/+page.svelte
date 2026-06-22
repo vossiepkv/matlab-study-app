@@ -1,33 +1,35 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { base } from '$app/paths';
-	import { getWeek, getWeekCards } from '$lib/data';
-	import FlashcardDeck from '$lib/components/study/FlashcardDeck.svelte';
+	import { getSubject, getModule, getModuleQuiz } from '$lib/data';
+	import QuizMode from '$lib/components/study/QuizMode.svelte';
 
-	let weekNum = $derived(Number(page.params.weekNum));
-	let week = $derived(getWeek(weekNum));
-	let cards = $derived(getWeekCards(weekNum));
+	let slug = $derived(page.params.subject);
+	let moduleNum = $derived(Number(page.params.moduleNum));
+	let subject = $derived(getSubject(slug));
+	let mod = $derived(getModule(slug, moduleNum));
+	let questions = $derived(getModuleQuiz(slug, moduleNum));
 </script>
 
-{#if week && cards.length > 0}
-	<div class="flashcards-page">
+{#if subject && mod && questions.length > 0}
+	<div class="quiz-page">
 		<header class="page-header">
-			<a href="{base}/week/{weekNum}" class="back-link">Week {weekNum}</a>
-			<h1>Flashcards: {week.title}</h1>
+			<a href="{base}/{slug}/module/{moduleNum}" class="back-link">Module {moduleNum}</a>
+			<h1>Quiz: {mod.title}</h1>
 		</header>
 
-		<FlashcardDeck {cards} {weekNum} topicName={week.title} />
+		<QuizMode {questions} subject={slug} {moduleNum} />
 	</div>
 {:else}
 	<div class="not-found">
-		<h1>No flashcards found</h1>
-		<p>No flashcard data available for Week {weekNum}.</p>
-		<a href="{base}/" class="btn-primary">Back to Home</a>
+		<h1>No quiz found</h1>
+		<p>No quiz data available for this module.</p>
+		<a href="{base}/" class="btn-primary">Back to Dashboard</a>
 	</div>
 {/if}
 
 <style>
-	.flashcards-page {
+	.quiz-page {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-lg);

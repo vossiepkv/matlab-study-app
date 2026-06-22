@@ -1,34 +1,36 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { base } from '$app/paths';
-	import { getWeek, getWeekTranslations } from '$lib/data';
-	import MathTranslator from '$lib/components/study/MathTranslator.svelte';
+	import { getSubject, getModule, getModuleLabs } from '$lib/data';
+	import LabWalkthrough from '$lib/components/study/LabWalkthrough.svelte';
 
-	let weekNum = $derived(Number(page.params.weekNum));
-	let week = $derived(getWeek(weekNum));
-	let items = $derived(getWeekTranslations(weekNum));
+	let slug = $derived(page.params.subject);
+	let moduleNum = $derived(Number(page.params.moduleNum));
+	let subject = $derived(getSubject(slug));
+	let mod = $derived(getModule(slug, moduleNum));
+	let exercises = $derived(getModuleLabs(slug, moduleNum));
 </script>
 
-{#if week && items.length > 0}
-	<div class="translate-page">
+{#if subject && mod && exercises.length > 0}
+	<div class="lab-page">
 		<header class="page-header">
-			<a href="{base}/week/{weekNum}" class="back-link">Week {weekNum}</a>
-			<h1>Translate: {week.title}</h1>
-			<p class="subtitle">Turn math expressions into MATLAB code, one piece at a time.</p>
+			<a href="{base}/{slug}/module/{moduleNum}" class="back-link">Module {moduleNum}</a>
+			<h1>Simulation Lab: {mod.title}</h1>
+			<p class="subtitle">Work through each exercise. Reveal hints and steps at your own pace.</p>
 		</header>
 
-		<MathTranslator {items} {weekNum} topicName={week.title} />
+		<LabWalkthrough {exercises} {moduleNum} />
 	</div>
 {:else}
 	<div class="not-found">
-		<h1>No translation exercises yet</h1>
-		<p>No translation drills are available for Week {weekNum}.</p>
-		<a href="{base}/" class="btn-primary">Back to Home</a>
+		<h1>No lab walkthrough yet</h1>
+		<p>No simulation-lab exercises are available for this module.</p>
+		<a href="{base}/" class="btn-primary">Back to Dashboard</a>
 	</div>
 {/if}
 
 <style>
-	.translate-page {
+	.lab-page {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-lg);
