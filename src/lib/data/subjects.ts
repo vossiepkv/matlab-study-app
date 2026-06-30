@@ -13,6 +13,7 @@ import { week6Cards, week6Quiz } from './week6';
 import { week7Cards, week7Quiz } from './week7';
 import { getWeekTranslations } from './translations';
 import { getWeekLabs } from './labs';
+import { mathsModules, mathsCards, mathsQuiz } from './maths';
 
 /**
  * A "module" is one unit of study within a subject (formerly "week").
@@ -95,8 +96,14 @@ const matlabContent: SubjectContent = {
 
 const emptyContent = (): SubjectContent => ({ modules: [], cards: {}, quiz: {} });
 
+const mathsContent: SubjectContent = {
+	modules: mathsModules,
+	cards: mathsCards,
+	quiz: mathsQuiz
+};
+
 const content: Record<string, SubjectContent> = {
-	maths: emptyContent(),
+	maths: mathsContent,
 	matlab: matlabContent,
 	'eng-science': emptyContent(),
 	'eng-materials': emptyContent()
