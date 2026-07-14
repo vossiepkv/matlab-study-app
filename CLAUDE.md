@@ -189,6 +189,7 @@ Static adapter with `fallback: 'index.html'` for SPA client-side routing.
 - [ ] Author content for the 3 placeholder subjects (`maths`, `eng-science`, `eng-materials`) — add module metadata + cards/quiz to their `content` entries in `subjects.ts`. Decide per subject whether translate/lab modes apply.
 - [ ] Download OpenDyslexic + Atkinson Hyperlegible woff2 fonts to /static/fonts/
 - [ ] Full accessibility pass (keyboard nav, screen reader, TTS, themes) across the new dashboard/subject pages
+- [ ] Build a **learning pathway for maths**: a continuous progression from the basics (Module 0 "Algebra Foundations" — variables, like terms, BODMAS, expanding brackets, index laws, solving/rearranging simple equations) up to the level assumed by the actual maths class (vectors, complex numbers, differentiation, integration, functions of several variables). Fill the gap between Module 0 basics and Module 1+ course content with intermediate revision (e.g. quadratics, surds, rationalising, algebraic fractions, trig/log basics) so a student can start from Module 0 and be prepared for the course modules. Sequence the modules so each builds on the previous.
 
 ### Adding content to a placeholder subject
 1. Create per-module data (cards/quiz) following the `CardData`/`QuizData` shapes; reuse the `w{n}-c{nn}` ID convention.
