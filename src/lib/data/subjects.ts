@@ -14,6 +14,7 @@ import { week7Cards, week7Quiz } from './week7';
 import { getWeekTranslations } from './translations';
 import { getWeekLabs } from './labs';
 import { mathsModules, mathsCards, mathsQuiz } from './maths';
+import { engMaterialsModules, engMaterialsCards, engMaterialsQuiz } from './eng-materials';
 
 /**
  * A "module" is one unit of study within a subject (formerly "week").
@@ -57,6 +58,7 @@ export const subjects: SubjectMeta[] = [
 		slug: 'eng-materials',
 		title: 'Engineering Materials',
 		shortTitle: 'Materials',
+		courseCode: 'PROC2097',
 		icon: '\u{1F9F1}',
 		description: 'Properties, structure, processing, and selection of engineering materials.'
 	}
@@ -102,11 +104,17 @@ const mathsContent: SubjectContent = {
 	quiz: mathsQuiz
 };
 
+const engMaterialsContent: SubjectContent = {
+	modules: engMaterialsModules,
+	cards: engMaterialsCards,
+	quiz: engMaterialsQuiz
+};
+
 const content: Record<string, SubjectContent> = {
 	maths: mathsContent,
 	matlab: matlabContent,
 	'eng-science': emptyContent(),
-	'eng-materials': emptyContent()
+	'eng-materials': engMaterialsContent
 };
 
 export function getModules(subject: string): ModuleMeta[] {
