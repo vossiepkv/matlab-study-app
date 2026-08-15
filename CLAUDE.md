@@ -10,7 +10,7 @@ The app is a dashboard over four subjects, each following the **same structure a
 |---------|------|--------|
 | Mathematics | `maths` | populated (Modules 0–15) |
 | Digital Fundamentals (MATLAB) — **OENG1298** | `matlab` | fully populated (Modules 1–7) |
-| Engineering Sciences | `eng-science` | placeholder |
+| Engineering Sciences — **MANU 2112** | `eng-science` | in progress (Modules 1–2) |
 | Engineering Materials — **PROC2097** | `eng-materials` | in progress (Modules 1–2) |
 
 **Terminology:** a unit of study within a subject is a **Module** (the UI says "Module N"). The MATLAB content was originally authored as "weeks", so some internal data files (`weekN.ts`, `weeks.ts`) and translation/lab getters still use the `week` name — these are the MATLAB module data.
@@ -186,7 +186,8 @@ Static adapter with `fallback: 'index.html'` for SPA client-side routing.
 **Done:** Multi-subject restructure (dashboard → subjects → modules → study modes), MATLAB content (Modules 1–7: flashcards, quiz, cheat sheet, translate, lab), subject-namespaced progress, all route pages, settings.
 
 **Remaining:**
-- [ ] Author remaining `eng-materials` modules (source PDFs live in `/Desktop/U/Eng-Mat/<week>/`; Modules 1–2 done in `src/lib/data/eng-materials/`) and all of `eng-science`.
+- [ ] Author remaining `eng-materials` modules (source PDFs live in `/Desktop/U/Eng-Mat/<week>/`; Modules 1–2 done in `src/lib/data/eng-materials/`).
+- [ ] Author remaining `eng-science` modules (source lecture PDFs live in `/Desktop/U/ENG SCI/Week <n>/`; Modules 1–2 done in `src/lib/data/eng-science/`). Note the Week 1–2 decks are largely **image-based slides** — the formulas and worked examples live in the slide graphics, so the PDFs must be read visually, not via text extraction.
 - [ ] Download OpenDyslexic + Atkinson Hyperlegible woff2 fonts to /static/fonts/
 - [ ] Full accessibility pass (keyboard nav, screen reader, TTS, themes) across the new dashboard/subject pages
 - [ ] Build a **learning pathway for maths**: a continuous progression from the basics (Module 0 "Algebra Foundations" — variables, like terms, BODMAS, expanding brackets, index laws, solving/rearranging simple equations) up to the level assumed by the actual maths class (vectors, complex numbers, differentiation, integration, functions of several variables). Fill the gap between Module 0 basics and Module 1+ course content with intermediate revision (e.g. quadratics, surds, rationalising, algebraic fractions, trig/log basics) so a student can start from Module 0 and be prepared for the course modules. Sequence the modules so each builds on the previous.

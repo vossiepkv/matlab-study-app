@@ -15,6 +15,7 @@ import { getWeekTranslations } from './translations';
 import { getWeekLabs } from './labs';
 import { mathsModules, mathsCards, mathsQuiz } from './maths';
 import { engMaterialsModules, engMaterialsCards, engMaterialsQuiz } from './eng-materials';
+import { engScienceModules, engScienceCards, engScienceQuiz } from './eng-science';
 
 /**
  * A "module" is one unit of study within a subject (formerly "week").
@@ -51,6 +52,7 @@ export const subjects: SubjectMeta[] = [
 		slug: 'eng-science',
 		title: 'Engineering Sciences',
 		shortTitle: 'Eng Science',
+		courseCode: 'MANU 2112',
 		icon: '⚙️',
 		description: 'Physical principles behind engineering — mechanics, energy, and systems.'
 	},
@@ -110,10 +112,16 @@ const engMaterialsContent: SubjectContent = {
 	quiz: engMaterialsQuiz
 };
 
+const engScienceContent: SubjectContent = {
+	modules: engScienceModules,
+	cards: engScienceCards,
+	quiz: engScienceQuiz
+};
+
 const content: Record<string, SubjectContent> = {
 	maths: mathsContent,
 	matlab: matlabContent,
-	'eng-science': emptyContent(),
+	'eng-science': engScienceContent,
 	'eng-materials': engMaterialsContent
 };
 
