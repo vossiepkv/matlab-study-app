@@ -11,7 +11,7 @@ The app is a dashboard over four subjects, each following the **same structure a
 | Mathematics | `maths` | populated (Modules 0–15) |
 | Digital Fundamentals (MATLAB) — **OENG1298** | `matlab` | fully populated (Modules 1–7) |
 | Engineering Sciences — **MANU 2112** | `eng-science` | in progress (Modules 1–2) |
-| Engineering Materials — **PROC2097** | `eng-materials` | in progress (Modules 1–2) |
+| Engineering Materials — **PROC2097** | `eng-materials` | in progress (Module 0 = Lab 1 practical guide, Modules 1–2 lectures) |
 
 **Terminology:** a unit of study within a subject is a **Module** (the UI says "Module N"). The MATLAB content was originally authored as "weeks", so some internal data files (`weekN.ts`, `weeks.ts`) and translation/lab getters still use the `week` name — these are the MATLAB module data.
 
@@ -54,7 +54,7 @@ src/routes/
       quiz/+page.svelte                      # QuizMode for the module
       cheatsheet/+page.svelte                # Quick reference sheet
       translate/+page.svelte                 # MathTranslator (MATLAB only)
-      lab/+page.svelte                       # LabWalkthrough (MATLAB only)
+      lab/+page.svelte                       # LabWalkthrough (MATLAB sim labs + eng-materials practicals)
   review/+page.svelte                       # Spaced repetition review (due cards across ALL subjects)
   settings/+page.svelte                     # Full settings page
 ```
@@ -66,7 +66,7 @@ Pure SPA (`fallback: 'index.html'`), so `[subject]`/`[moduleNum]` are client-ren
 `src/lib/data/subjects.ts` is the multi-subject registry + central API:
 - `subjects: SubjectMeta[]` (slug, title, shortTitle, icon, description, courseCode?) and `getSubject(slug)`
 - `content: Record<slug, { modules, cards, quiz }>` — MATLAB is populated from the existing `weekN.ts`/`weeks.ts` files; other subjects are empty placeholders
-- Subject-aware getters: `getModules(subject)`, `getModule(subject, num)`, `getModuleCards(subject, num)`, `getModuleQuiz(subject, num)`, `getModuleTranslations(subject, num)`, `getModuleLabs(subject, num)` (translations/labs return `[]` for non-MATLAB)
+- Subject-aware getters: `getModules(subject)`, `getModule(subject, num)`, `getModuleCards(subject, num)`, `getModuleQuiz(subject, num)`, `getModuleTranslations(subject, num)`, `getModuleLabs(subject, num)` (translations return `[]` for non-MATLAB; labs come from `weeks`→`labs.ts` for MATLAB and `eng-materials/labs.ts` for Engineering Materials, `[]` otherwise)
 - `DeckCard` = `CardData & { subjectSlug, moduleNum }`; `toDeckCards(subject, num, cards)` tags cards so a deck can record progress; `getAllDeckCards()` (global review); `cardKey(subject, cardId)` → namespaced progress key like `"matlab:w1-c01"`
 - `ModuleMeta` is an alias of the original `WeekMeta`
 
@@ -187,6 +187,13 @@ Static adapter with `fallback: 'index.html'` for SPA client-side routing.
 
 **Remaining:**
 - [ ] Author remaining `eng-materials` modules (source PDFs live in `/Desktop/U/Eng-Mat/<week>/`; Modules 1–2 done in `src/lib/data/eng-materials/`).
+      Module **0** is not a lecture week — it is the Lab 1 practical guide ("Tensile & Hardness Testing of Black Mild Steel", source photos in `/Desktop/U/Eng-Mat/Lab1/`),
+      in `module0.ts` (cards + quiz) and `labs.ts` (10-exercise walkthrough). It is numbered 0, and listed first in `engMaterialsModules`, so it sits above the
+      lecture modules — mirroring `maths/module0.ts`. Lecture weeks therefore keep their natural numbering from 3 up.
+      **The practical is demonstrated by the tutor** — students observe and record — so walkthrough exercises 1–4 are framed as "what to watch for and what to
+      write down", and exercises 5–10 (analysis + write-up) are the student's own work. Two pages of the handout were never photographed: page 4
+      (manufacturer's specification for the steel) and page 5 (Part 2: hardness test procedure), so the Rockwell procedure and the published property values
+      in Module 0 come from standard practice, not the handout.
 - [ ] Author remaining `eng-science` modules (source lecture PDFs live in `/Desktop/U/ENG SCI/Week <n>/`; Modules 1–2 done in `src/lib/data/eng-science/`). Note the Week 1–2 decks are largely **image-based slides** — the formulas and worked examples live in the slide graphics, so the PDFs must be read visually, not via text extraction.
 - [ ] Download OpenDyslexic + Atkinson Hyperlegible woff2 fonts to /static/fonts/
 - [ ] Full accessibility pass (keyboard nav, screen reader, TTS, themes) across the new dashboard/subject pages

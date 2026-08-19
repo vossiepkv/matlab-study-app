@@ -14,7 +14,12 @@ import { week7Cards, week7Quiz } from './week7';
 import { getWeekTranslations } from './translations';
 import { getWeekLabs } from './labs';
 import { mathsModules, mathsCards, mathsQuiz } from './maths';
-import { engMaterialsModules, engMaterialsCards, engMaterialsQuiz } from './eng-materials';
+import {
+	engMaterialsModules,
+	engMaterialsCards,
+	engMaterialsQuiz,
+	engMaterialsLabs
+} from './eng-materials';
 import { engScienceModules, engScienceCards, engScienceQuiz } from './eng-science';
 
 /**
@@ -147,8 +152,11 @@ export function getModuleTranslations(subject: string, num: number): Translation
 }
 
 export function getModuleLabs(subject: string, num: number): LabExercise[] {
-	// Simulation-lab walkthroughs are MATLAB-specific.
-	return subject === 'matlab' ? getWeekLabs(num) : [];
+	// MATLAB has simulation-lab walkthroughs per module; Engineering Materials has
+	// practical (wet lab) walkthroughs. Other subjects have none yet.
+	if (subject === 'matlab') return getWeekLabs(num);
+	if (subject === 'eng-materials') return engMaterialsLabs[num] ?? [];
+	return [];
 }
 
 /** A flashcard tagged with its owning subject + module so decks can record progress. */

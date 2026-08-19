@@ -15,7 +15,7 @@
 	<div class="lab-page">
 		<header class="page-header">
 			<a href="{base}/{slug}/module/{moduleNum}" class="back-link">Module {moduleNum}</a>
-			<h1>Simulation Lab: {mod.title}</h1>
+			<h1>{slug === 'matlab' ? 'Simulation Lab: ' : ''}{mod.title}</h1>
 			<p class="subtitle">Work through each exercise. Reveal hints and steps at your own pace.</p>
 		</header>
 

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { progressStore } from '$lib/stores/progress.svelte';
+	import { getModuleLabs } from '$lib/data';
 	import ProgressBar from './ProgressBar.svelte';
 
 	interface Props {
@@ -12,10 +13,15 @@
 	let { subjectSlug, moduleNum, title }: Props = $props();
 	let stats = $derived(progressStore.getModuleStats(subjectSlug, moduleNum));
 	let pct = $derived(stats.flashcardsTotal > 0 ? (stats.flashcardsViewed / stats.flashcardsTotal) * 100 : 0);
+	let hasLab = $derived(getModuleLabs(subjectSlug, moduleNum).length > 0);
 </script>
 
 <div class="module-progress card">
-	<h3>Module {moduleNum}: {title}</h3>
+	<h3>
+		<a href="{base}/{subjectSlug}/module/{moduleNum}" class="module-link">
+			Module {moduleNum}: {title}
+		</a>
+	</h3>
 	<ProgressBar value={pct} label="Flashcards" />
 	{#if stats.quizBestScore !== null}
 		<p class="quiz-score">Best quiz score: <strong>{stats.quizBestScore}%</strong></p>
@@ -24,12 +30,26 @@
 		<a href="{base}/{subjectSlug}/module/{moduleNum}/flashcards" class="btn-primary action-btn">Flashcards</a>
 		<a href="{base}/{subjectSlug}/module/{moduleNum}/quiz" class="btn-secondary action-btn">Quiz</a>
 		<a href="{base}/{subjectSlug}/module/{moduleNum}/cheatsheet" class="btn-secondary action-btn">Cheat Sheet</a>
+		{#if hasLab}
+			<a href="{base}/{subjectSlug}/module/{moduleNum}/lab" class="btn-secondary action-btn">Lab Guide</a>
+		{/if}
 	</div>
 </div>
 
 <style>
 	.module-progress h3 {
 		margin-bottom: var(--space-sm);
+	}
+
+	.module-link {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.module-link:hover,
+	.module-link:focus-visible {
+		color: var(--color-primary);
+		text-decoration: underline;
 	}
 
 	.quiz-score {
