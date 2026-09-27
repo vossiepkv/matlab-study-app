@@ -11,7 +11,7 @@ The app is a dashboard over four subjects, each following the **same structure a
 | Mathematics | `maths` | populated (Modules 0–15) |
 | Digital Fundamentals (MATLAB) — **OENG1298** | `matlab` | fully populated (Modules 1–7) |
 | Engineering Sciences — **MANU 2112** | `eng-science` | in progress (Modules 1–2) |
-| Engineering Materials — **PROC2097** | `eng-materials` | in progress (Module 0 = Lab 1 practical guide, Modules 1–2 lectures) |
+| Engineering Materials — **PROC2097** | `eng-materials` | in progress (Module 0 = Lab 1 practical guide, Modules 1–2 and 5 lectures) |
 
 **Terminology:** a unit of study within a subject is a **Module** (the UI says "Module N"). The MATLAB content was originally authored as "weeks", so some internal data files (`weekN.ts`, `weeks.ts`) and translation/lab getters still use the `week` name — these are the MATLAB module data.
 
@@ -186,7 +186,7 @@ Static adapter with `fallback: 'index.html'` for SPA client-side routing.
 **Done:** Multi-subject restructure (dashboard → subjects → modules → study modes), MATLAB content (Modules 1–7: flashcards, quiz, cheat sheet, translate, lab), subject-namespaced progress, all route pages, settings.
 
 **Remaining:**
-- [ ] Author remaining `eng-materials` modules (source PDFs live in `/Desktop/U/Eng-Mat/<week>/`; Modules 1–2 done in `src/lib/data/eng-materials/`).
+- [ ] Author remaining `eng-materials` modules (source PDFs live in `/Desktop/U/Eng-Mat/<week>/`; Modules 1–2 and 5 (Portland Cement) done in `src/lib/data/eng-materials/`).
       Module **0** is not a lecture week — it is the Lab 1 practical guide ("Tensile & Hardness Testing of Black Mild Steel", source photos in `/Desktop/U/Eng-Mat/Lab1/`),
       in `module0.ts` (cards + quiz) and `labs.ts` (10-exercise walkthrough). It is numbered 0, and listed first in `engMaterialsModules`, so it sits above the
       lecture modules — mirroring `maths/module0.ts`. Lecture weeks therefore keep their natural numbering from 3 up.

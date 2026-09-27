@@ -4,6 +4,7 @@ import type { ModuleMeta } from '../subjects';
 import { m0Meta, m0Cards, m0Quiz } from './module0';
 import { m1Meta, m1Cards, m1Quiz } from './module1';
 import { m2Meta, m2Cards, m2Quiz } from './module2';
+import { m5Meta, m5Cards, m5Quiz } from './module5';
 
 export { engMaterialsLabs } from './labs';
 
@@ -11,18 +12,20 @@ export { engMaterialsLabs } from './labs';
  * Module metadata for the Engineering Materials subject (PROC2097).
  * Module 0 is the Lab 1 practical guide and deliberately sits above the lecture modules.
  */
-export const engMaterialsModules: ModuleMeta[] = [m0Meta, m1Meta, m2Meta];
+export const engMaterialsModules: ModuleMeta[] = [m0Meta, m1Meta, m2Meta, m5Meta];
 
 /** Flashcards keyed by module number. */
 export const engMaterialsCards: Record<number, CardData[]> = {
 	0: m0Cards,
 	1: m1Cards,
-	2: m2Cards
+	2: m2Cards,
+	5: m5Cards
 };
 
 /** Quiz questions keyed by module number. */
 export const engMaterialsQuiz: Record<number, QuizData[]> = {
 	0: m0Quiz,
 	1: m1Quiz,
-	2: m2Quiz
+	2: m2Quiz,
+	5: m5Quiz
 };
